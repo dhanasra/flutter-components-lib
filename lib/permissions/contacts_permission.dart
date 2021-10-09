@@ -1,7 +1,7 @@
 part of spidy;
 
 @immutable
-class ContactsPermission{
+class ContactsPermission extends Spidy{
   void checkServiceStatus(
       BuildContext context, PermissionWithService permission) async {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
