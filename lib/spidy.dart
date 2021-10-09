@@ -2,6 +2,8 @@ library spidy;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:permission_handler/permission_handler.dart';
 part 'label/text_label.dart';
 part 'input/single_select.dart';
 part 'container/border_container.dart';
@@ -14,6 +16,7 @@ part 'input/radio_group.dart';
 part 'card/user_card.dart';
 part 'card/user_card_list.dart';
 part 'card/radio_card.dart';
+part 'permissions/contacts_permission.dart';
 
 class Spidy{
   static EdgeInsetsGeometry getEdge(List edges){
