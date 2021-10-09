@@ -10,6 +10,6 @@ class ContactsPermission{
 
   Future<void> request() async {
     final status = await Permission.contacts.request();
-    
+    print(status);
   }
 }
