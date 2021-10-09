@@ -1,5 +1,6 @@
 part of spidy;
 
+@immutable
 class ContactsPermission{
   void checkServiceStatus(
       BuildContext context, PermissionWithService permission) async {
