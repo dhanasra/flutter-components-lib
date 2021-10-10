@@ -1,5 +1,6 @@
 library spidy;
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +18,7 @@ part 'card/user_card.dart';
 part 'card/user_card_list.dart';
 part 'card/radio_card.dart';
 part 'permissions/contacts_permission.dart';
+part 'view/carousel_container.dart';
 
 class Spidy{
   static EdgeInsetsGeometry getEdge(List edges){
