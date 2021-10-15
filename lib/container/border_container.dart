@@ -13,6 +13,7 @@ class BorderContainer extends StatelessWidget {
   final Constraints constraints;
   final BoxDecoration decoration;
   final Border border;
+  final bool wrap;
 
   BorderContainer({
     this.child,
@@ -20,6 +21,7 @@ class BorderContainer extends StatelessWidget {
     this.borderColor,
     this.radius,
     this.width,
+    this.wrap = false,
     this.height,
     this.isShadow,
     this.margin = const [],
@@ -36,7 +38,7 @@ class BorderContainer extends StatelessWidget {
 
   Widget container(){
     return Container(
-        width: width??double.infinity,
+        width: wrap?null:width??double.infinity,
         child: child,
         height: height,
         padding: padding!=null?Spidy.getEdge(padding):Spidy.getEdge([]),

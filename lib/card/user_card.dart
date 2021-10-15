@@ -55,6 +55,7 @@ class UserCard extends StatelessWidget {
   final bool isEndIconClickable;
   final VoidCallback onCardPressed;
   final VoidCallback onEndIconPressed;
+  final Widget child;
 
 
   UserCard({
@@ -70,6 +71,7 @@ class UserCard extends StatelessWidget {
     this.border,
     this.imageUrl,
     this.imagePadding,
+    this.child,
     this.imageMargin,
     this.imageRadius,
     this.imageHeight,
@@ -112,26 +114,21 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return isClickable
         ? BorderContainer(
+            isShadow: true,
             margin: margin,
-            child: Card(
-              elevation:8,
-              child: ClipPath(
-                  child:
-                  Material(
-                    color: bgColor?? Colors.white,
-                    child: InkWell(
-                      onTap: onCardPressed,
-                      child: userCard(),
-                    )),
-                clipper: ShapeBorderClipper(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(radius??3))
-                ),
-              )
-            )
+            padding: padding,
+            width: width,
+            child: Material(
+                color: bgColor?? Colors.white,
+                child: InkWell(
+                  onTap: onCardPressed,
+                  child: userCard(),
+                ))
         )
         : BorderContainer(
             margin: margin,
+            padding: padding,
+        width: width,
             child: ClipPath(
                   child: Card(
                         elevation:8,
@@ -179,6 +176,7 @@ class UserCard extends StatelessWidget {
                         fontWeight: userNameFontWeight,
                         fontFamily: userNameFontFamily,
                         color: userNameColor,
+                        textAlign: TextAlign.start,
                         bgColor: userNameBgColor,
                         padding: userNamePadding,
                         margin: userNameMargin,
@@ -188,6 +186,7 @@ class UserCard extends StatelessWidget {
                         label: subName,
                         fontSize: subNameFontSize??12,
                         fontWeight: subNameFontWeight,
+                        textAlign: TextAlign.start,
                         fontFamily: subNameFontFamily,
                         color: subNameColor??Colors.grey,
                         padding: subNamePadding,
@@ -203,6 +202,7 @@ class UserCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: endIconAlignment,
                     children: [
+                      child??Container(),
                       isEndIconClickable
                           ? Material(
                         child: InkWell(
@@ -216,7 +216,7 @@ class UserCard extends StatelessWidget {
                             margin: endIconMargin,
                           ),
                         ),
-                      ) : icon()
+                      ) : icon(),
                     ],
                   ),
                 )

@@ -7,6 +7,7 @@ class TextInput extends StatefulWidget {
   final bool isFilled;
   final bool isClassic;
   final bool noBorder;
+  final bool isPhone;
   final TextInputType inputType;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -14,6 +15,7 @@ class TextInput extends StatefulWidget {
   //overall division
   final double width;
   final double height;
+  final double textHeight;
   final List<double> margin;
   final List<double> padding;
   //content
@@ -72,11 +74,13 @@ class TextInput extends StatefulWidget {
     this.isEnabled = true,
     this.isExpands = false,
     this.inputType,
+    this.isPhone = false,
     this.controller,
     this.focusNode,
     this.isObscured = false,
     this.width,
     this.height,
+    this.textHeight,
     this.margin,
     this.padding,
     this.isFilled = true,
@@ -123,7 +127,7 @@ class TextInput extends StatefulWidget {
     this.patternErrorText,
     this.regExp,
     this.textAlignVertical,
-    this.textAlign,
+    this.textAlign = TextAlign.start,
     this.onChanged
   });
 
@@ -135,129 +139,151 @@ class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.white,
       width: widget.width??double.infinity,
       height: widget.height,
       padding: widget.padding!=null?Spidy.getEdge(widget.padding):Spidy.getEdge([]),
       margin: widget.margin!=null?Spidy.getEdge(widget.margin):Spidy.getEdge([]),
-      child: TextFormField(
-        onChanged: widget.onChanged,
-        autofocus: widget.autoFocus,
-        enabled: widget.isEnabled,
-        focusNode: widget.focusNode,
-        controller: widget.controller,
-        obscureText: widget.isObscured,
-        textAlignVertical: widget.textAlignVertical,
-        textAlign: widget.textAlign,
-        keyboardType: widget.inputType,
-        maxLines: widget.isExpands?null:widget.maxLine,
-        minLines: widget.isExpands?null:widget.minLine,
-        expands: widget.isExpands,
-        validator: (String val) {
-          if (val.isEmpty) {
-            return widget.emptyErrorText ?? 'The field Should not be empty';
-          } else {
-            if (widget.regExp != null) {
-              if (!widget.regExp.hasMatch(val))
-                return widget.patternErrorText ??
-                    'The Email Id is not valid';
-            }
-            if (widget.minLength != null) {
-              if (widget.minLength > val.length)
-                return widget.lengthErrorText ??
-                    'The field Should not be empty';
-            }
-            if (widget.maxLength != null) {
-              if (widget.maxLength < val.length)
-                return widget.lengthErrorText ??
-                    'The field Should not be empty';
-            }
-            return null;
-          }
-        },
-        style: TextStyle(
-            fontFamily: widget.fontFamily,
-            fontSize: 18,
-            fontWeight: widget.fontWeight,
-            color: widget.color??Colors.black),
-        decoration: InputDecoration(
-          isDense: true,
-          filled: widget.isFilled,
-          isCollapsed: false,
-          fillColor: Colors.blue.shade100,
-          prefix: widget.prefix,
-          suffix: widget.suffix,
-          labelText: widget.labelText,
-          hintText: widget.hintText,
-          helperText: widget.helperText,
-          counterText: widget.counterText,
-          errorText: widget.errorText,
-          prefixText: widget.prefixText,
-          suffixText: widget.suffixText,
-          labelStyle: TextStyle(
-              fontFamily: widget.fontFamily,
-              fontSize: 18,
-              fontWeight: FontWeight.w300,
-              color: widget.labelColor??Colors.red),
-          errorStyle: TextStyle(
-              fontFamily: widget.fontFamily,
-              fontSize: 18,
-              fontWeight: FontWeight.w300,
-              color: widget.errorColor??Colors.red),
-          hintStyle: TextStyle(
-              fontFamily: widget.fontFamily,
-              fontSize: 18,
-              fontWeight: widget.fontWeight,
-              color: widget.hintColor??Colors.grey),
-          counter: widget.counter,
-          contentPadding: Spidy.getEdge(widget.contentPadding),
-          icon: widget.icon!=null
-              ?Icon(widget.icon,size: widget.iconSize??16,color: widget.iconColor,)
-              :null,
-          prefixIcon: widget.prefixIcon!=null
-              ?Icon(widget.prefixIcon,size: widget.prefixIconSize??16,color: widget.prefixIconColor,)
-              :null,
-          suffixIcon: widget.suffixIcon!=null
-              ?Icon(widget.suffixIcon,size: widget.suffixIconSize??16,color: widget.suffixIconColor,)
-              :null,
-          errorBorder:  widget.noBorder? InputBorder.none:
-          widget.isClassic ?UnderlineInputBorder()
-              :OutlineInputBorder(
-            borderSide: BorderSide(
-                color: Colors.red,
-                width: widget.focusedBorderWidth),
-            borderRadius: BorderRadius.circular(widget.radius ?? 0),
-          ),
-          focusedErrorBorder:  widget.noBorder? InputBorder.none:
-          widget.isClassic ?UnderlineInputBorder()
-              :OutlineInputBorder(
-            borderSide: BorderSide(
-                color: Colors.red,
-                width: widget.focusedBorderWidth),
-            borderRadius: BorderRadius.circular(widget.radius ?? 0),
-          ),
-          focusedBorder:  widget.noBorder? InputBorder.none:
-          widget.isClassic ?UnderlineInputBorder()
-              :OutlineInputBorder(
-            borderSide: BorderSide(
-                color: widget.focusedBorderColor??Colors.deepPurple,
-                width: widget.focusedBorderWidth),
-            borderRadius: BorderRadius.circular(widget.radius ?? 0),
-          ),
-          enabledBorder:  widget.noBorder? InputBorder.none:
-          widget.isClassic ?UnderlineInputBorder()
-              :OutlineInputBorder(
-            borderSide: BorderSide(
-                color: widget.enabledBorderColor??Colors.indigoAccent,
-                width: widget.enabledBorderWidth),
-            borderRadius: BorderRadius.circular(widget.radius ?? 0),
-          ),
-          border: widget.noBorder? InputBorder.none:
-          widget.isClassic ?UnderlineInputBorder()
-              :OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.radius ?? 0),
-              borderSide:
-              const BorderSide(color: Colors.black, width: 5.0)),
+      child: widget.isPhone?phoneInput():input(),
+    );
+  }
+
+  Widget phoneInput(){
+    return Row(
+      children: [
+        TextLabel(
+          label: widget.prefixText??"+ 91",
+          fontSize: widget.fontSize??18,
+          width: widget.prefixIconSize??35,
+          color: widget.prefixIconColor??Colors.grey,
+          fontWeight: widget.fontWeight,
+          fontFamily: widget.fontFamily,
         ),
+        Expanded(
+          child: input(),
+        )
+      ],
+    );
+  }
+
+  Widget input(){
+    return TextFormField(
+      onChanged: widget.onChanged,
+      autofocus: widget.autoFocus,
+      enabled: widget.isEnabled,
+      focusNode: widget.focusNode,
+      controller: widget.controller,
+      obscureText: widget.isObscured,
+      textAlignVertical: widget.textAlignVertical,
+      textAlign: widget.textAlign,
+      keyboardType: widget.inputType,
+      maxLines: widget.isExpands?null:widget.maxLine,
+      minLines: widget.isExpands?null:widget.minLine,
+      expands: widget.isExpands,
+      validator: (String val) {
+        if (val.isEmpty) {
+          return widget.emptyErrorText ?? 'The field Should not be empty';
+        } else {
+          if (widget.regExp != null) {
+            if (!widget.regExp.hasMatch(val))
+              return widget.patternErrorText ??
+                  'The Email Id is not valid';
+          }
+          if (widget.minLength != null) {
+            if (widget.minLength > val.length)
+              return widget.lengthErrorText ??
+                  'The field Should not be empty';
+          }
+          if (widget.maxLength != null) {
+            if (widget.maxLength < val.length)
+              return widget.lengthErrorText ??
+                  'The field Should not be empty';
+          }
+          return null;
+        }
+      },
+      style: TextStyle(
+          fontFamily: widget.fontFamily,
+          fontSize: widget.fontSize??18,
+          height: widget.textHeight??1.8,
+          fontWeight: widget.fontWeight,
+          color: widget.color??Colors.black),
+      decoration: InputDecoration(
+        isDense: true,
+        filled: widget.isFilled,
+        isCollapsed: false,
+        fillColor: Colors.blue.shade100,
+        prefix: widget.prefix,
+        suffix: widget.suffix,
+        labelText: widget.labelText,
+        hintText: widget.hintText,
+        helperText: widget.helperText,
+        counterText: widget.counterText,
+        errorText: widget.errorText,
+        labelStyle: TextStyle(
+            fontFamily: widget.fontFamily,
+            fontSize: widget.fontSize??18,
+            fontWeight: FontWeight.w500,
+            color: widget.labelColor??Colors.red),
+        errorStyle: TextStyle(
+            fontFamily: widget.fontFamily,
+            fontSize: widget.fontSize??18,
+            fontWeight: FontWeight.w300,
+            color: widget.errorColor??Colors.red),
+        hintStyle: TextStyle(
+            fontFamily: widget.fontFamily,
+            fontSize: widget.fontSize??18,
+            fontWeight: widget.fontWeight,
+            color: widget.hintColor??Colors.grey),
+        counter: widget.counter,
+        contentPadding: Spidy.getEdge(widget.contentPadding),
+        icon: widget.icon!=null
+            ?Icon(widget.icon,size: widget.iconSize??16,color: widget.iconColor,)
+            :null,
+        prefixIcon: widget.prefixIcon!=null
+            ?Icon(widget.prefixIcon,size: widget.prefixIconSize??16,color: widget.prefixIconColor,)
+            :null,
+        suffixIcon: widget.suffixIcon!=null
+            ?Icon(widget.suffixIcon,size: widget.suffixIconSize??16,color: widget.suffixIconColor,)
+            :null,
+        errorBorder:  widget.noBorder? InputBorder.none:
+        widget.isClassic ?UnderlineInputBorder()
+            :OutlineInputBorder(
+          borderSide: BorderSide(
+              color: Colors.red,
+              width: widget.focusedBorderWidth),
+          borderRadius: BorderRadius.circular(widget.radius ?? 0),
+        ),
+        focusedErrorBorder:  widget.noBorder? InputBorder.none:
+        widget.isClassic ?UnderlineInputBorder()
+            :OutlineInputBorder(
+          borderSide: BorderSide(
+              color: Colors.red,
+              width: widget.focusedBorderWidth),
+          borderRadius: BorderRadius.circular(widget.radius ?? 0),
+        ),
+        focusedBorder:  widget.noBorder? InputBorder.none:
+        widget.isClassic ?UnderlineInputBorder()
+            :OutlineInputBorder(
+          borderSide: BorderSide(
+              color: widget.focusedBorderColor??Colors.deepPurple,
+              width: widget.focusedBorderWidth),
+          borderRadius: BorderRadius.circular(widget.radius ?? 0),
+        ),
+        enabledBorder:  widget.noBorder? InputBorder.none:
+        widget.isClassic ?UnderlineInputBorder()
+            :OutlineInputBorder(
+          borderSide: BorderSide(
+              color: widget.enabledBorderColor??Colors.indigoAccent,
+              width: widget.enabledBorderWidth),
+          borderRadius: BorderRadius.circular(widget.radius ?? 0),
+        ),
+        border: widget.noBorder?InputBorder.none:
+        widget.isClassic ?UnderlineInputBorder()
+            :OutlineInputBorder(
+            borderRadius: BorderRadius.circular(widget.radius ?? 0),
+            borderSide:
+            const BorderSide(color: Colors.black, width: 5.0)),
       ),
     );
   }

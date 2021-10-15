@@ -13,6 +13,7 @@ class TextLabel extends StatelessWidget {
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
   final bool isVertical;
+  final bool isReverse;
   //label style
   final Color color;
   final Color labelBgColor;
@@ -28,6 +29,7 @@ class TextLabel extends StatelessWidget {
   final TextDecorationStyle decorationStyle;
   final List<double> textPadding;
   final List<double> textMargin;
+  final TextAlign textAlign;
   //icon style
   final Color iconColor;
   final Color iconBgColor;
@@ -57,11 +59,13 @@ class TextLabel extends StatelessWidget {
     this.padding =  const [],
     this.margin =  const [],
     this.color,
+    this.isReverse = false,
     this.labelBgColor,
     this.fontWeight,
     this.fontSize,
     this.fontFamily,
     this.textHeight,
+    this.textAlign,
     this.letterSpacing,
     this.overflow,
     this.decoration,
@@ -87,38 +91,43 @@ class TextLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width??double.infinity,
-      height: height,
-      color: bgColor??Colors.transparent,
-      padding: padding!=null?Spidy.getEdge(padding):Spidy.getEdge([]),
-      margin: margin!=null?Spidy.getEdge(margin):Spidy.getEdge([]),
-      child: isVertical
-          ?Column(
+    return Directionality(
+      textDirection: isReverse?TextDirection.rtl:TextDirection.ltr,
+      child: Container(
+          width: width??double.infinity,
+          height: height,
+          color: bgColor??Colors.transparent,
+          padding: padding!=null?Spidy.getEdge(padding):Spidy.getEdge([]),
+          margin: margin!=null?Spidy.getEdge(margin):Spidy.getEdge([]),
+          child: isVertical
+              ?Column(
             mainAxisAlignment: mainAxisAlignment,
             crossAxisAlignment: crossAxisAlignment,
             children: children(),
           )
-          :Row(
-        mainAxisAlignment: mainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
-        children: children(),
-      )
+              :Row(
+            mainAxisAlignment: mainAxisAlignment,
+            crossAxisAlignment: crossAxisAlignment,
+            children: children(),
+          )
+      ),
     );
   }
 
   List<Widget> children(){
     return [
-      Container(
-        color: iconBgColor??Colors.transparent,
-        padding: iconPadding!=null?Spidy.getEdge(iconPadding):Spidy.getEdge([]),
-        margin: iconMargin!=null?Spidy.getEdge(iconMargin):Spidy.getEdge([]),
-        child: Icon(
-          icon,
-          color: iconColor??Colors.black,
-          size: iconSize,
-        ),
-      )??Container(),
+      icon!=null
+        ? Container(
+          color: iconBgColor??Colors.transparent,
+          padding: iconPadding!=null?Spidy.getEdge(iconPadding):Spidy.getEdge([]),
+          margin: iconMargin!=null?Spidy.getEdge(iconMargin):Spidy.getEdge([]),
+          child: Icon(
+            icon,
+            color: iconColor??Colors.black,
+            size: iconSize,
+          ),
+        )
+        : Container(),
       iconAsImage
           ?Container(
           width: imageWidth??20,
@@ -136,24 +145,28 @@ class TextLabel extends StatelessWidget {
           )
       )
           :Container(),
-      Container(
-        color: labelBgColor??Colors.transparent,
-        padding: textPadding!=null?Spidy.getEdge(textPadding):Spidy.getEdge([]),
-        margin: textMargin!=null?Spidy.getEdge(textMargin):Spidy.getEdge([]),
-        child: Text(
-          label,
-          overflow: overflow??null,
-          style: TextStyle(
-              fontSize: fontSize,
-              fontFamily: fontFamily,
-              fontWeight: fontWeight,
-              color: color??Colors.black,
-              letterSpacing: letterSpacing,
-              height: textHeight,
-              decoration: decoration,
-              decorationColor: decorationColor,
-              decorationThickness: decorationThickness,
-              decorationStyle: decorationStyle
+      Expanded(
+        child: Container(
+          color: labelBgColor??Colors.transparent,
+          padding: textPadding!=null?Spidy.getEdge(textPadding):Spidy.getEdge([]),
+          margin: textMargin!=null?Spidy.getEdge(textMargin):Spidy.getEdge([]),
+          child: Text(
+            label,
+            overflow: overflow??null,
+            maxLines: 3,
+            textAlign: textAlign??TextAlign.center,
+            style: TextStyle(
+                fontSize: fontSize,
+                fontFamily: fontFamily,
+                fontWeight: fontWeight,
+                color: color??Colors.black,
+                letterSpacing: letterSpacing,
+                height: textHeight,
+                decoration: decoration,
+                decorationColor: decorationColor,
+                decorationThickness: decorationThickness,
+                decorationStyle: decorationStyle
+            ),
           ),
         ),
       )
